@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	Reset = "\033[0m"
-	Red   = "\033[31m"
+	reset = "\033[0m"
+	red   = "\033[31m"
 )
 
 func Grep(fs fs.FS, file string, query string, w io.Writer) error {
@@ -27,7 +27,7 @@ func Grep(fs fs.FS, file string, query string, w io.Writer) error {
 		lineContent := scanner.Text()
 
 		if strings.Contains(lineContent, query) {
-			fmt.Fprintln(&buffer, strings.Replace(lineContent, query, Red+query+Reset, -1))
+			fmt.Fprintln(&buffer, strings.Replace(lineContent, query, red+query+reset, -1))
 		}
 	}
 

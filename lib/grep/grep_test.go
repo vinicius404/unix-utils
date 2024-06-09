@@ -8,52 +8,48 @@ import (
 )
 
 func TestGrep(t *testing.T) {
-	t.Run("returns line where query was found", func(t *testing.T) {
-		content := "Welcome to my world.\nYou will be greeted by the unexpected here and your mind will be challenged\nand expanded in ways you never tought possible."
-		fs := fstest.MapFS{
-			"file.txt": {Data: []byte(content)},
+	t.Run("return correct lines for the specified query", func(t *testing.T) {
+		cases := []struct {
+			content  string
+			query    string
+			expected string
+			filename string
+		}{
+			{
+				content:  "Welcome to my world.\nYou will be greeted by the unexpected here and your mind will be challenged\nand expanded in ways you never tought possible.",
+				query:    "greeted",
+				expected: fmt.Sprintf("You will be %sgreeted%s by the unexpected here and your mind will be challenged\n", red, reset),
+				filename: "file_1.txt",
+			},
+			{
+				content:  "One dollar and eighty-seven cents.\nThat was all.\nAnd sixty cents of it was in pennies.",
+				query:    "cents",
+				expected: fmt.Sprintf("One dollar and eighty-seven %scents%s.\nAnd sixty %scents%s of it was in pennies.\n", red, reset, red, reset),
+				filename: "file_2.txt",
+			},
+			{
+				content:  "One dollar and eighty-seven cents.\nThat was all.\nAnd sixty cents of it was in pennies.",
+				query:    "vegetables",
+				expected: "",
+				filename: "file_3.txt",
+			},
 		}
 
-		query := "greeted"
-		want := fmt.Sprintf("You will be %sgreeted%s by the unexpected here and your mind will be challenged\n", Red, Reset)
-		buffer := bytes.Buffer{}
+		fs := fstest.MapFS{}
 
-		err := Grep(fs, "file.txt", query, &buffer)
-
-		assertNoError(t, err)
-		assertResult(t, buffer.String(), want)
-	})
-
-	t.Run("returns multiple lines where the query was found", func(t *testing.T) {
-		content := "One dollar and eighty-seven cents.\nThat was all.\nAnd sixty cents of it was in pennies."
-		fs := fstest.MapFS{
-			"file.txt": {Data: []byte(content)},
+		for _, c := range cases {
+			fs[c.filename] = &fstest.MapFile{Data: []byte(c.content)}
 		}
 
-		query := "cents"
-		want := fmt.Sprintf("One dollar and eighty-seven %scents%s.\nAnd sixty %scents%s of it was in pennies.\n", Red, Reset, Red, Reset)
-		buffer := bytes.Buffer{}
+		for _, c := range cases {
+			t.Run(fmt.Sprintf("return correct lines for %q with %q query", c.filename, c.query), func(t *testing.T) {
+				buffer := bytes.Buffer{}
+				err := Grep(fs, c.filename, c.query, &buffer)
 
-		err := Grep(fs, "file.txt", query, &buffer)
-
-		assertNoError(t, err)
-		assertResult(t, buffer.String(), want)
-	})
-
-	t.Run("returns nothing if no query was found", func(t *testing.T) {
-		content := "One dollar and eighty-seven cents.\nThat was all.\nAnd sixty cents of it was in pennies."
-		fs := fstest.MapFS{
-			"file.txt": {Data: []byte(content)},
+				assertNoError(t, err)
+				assertResult(t, buffer.String(), c.expected)
+			})
 		}
-
-		query := "vegetables"
-		want := ""
-		buffer := bytes.Buffer{}
-
-		err := Grep(fs, "file.txt", query, &buffer)
-
-		assertNoError(t, err)
-		assertResult(t, buffer.String(), want)
 	})
 }
 

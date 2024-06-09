@@ -9,6 +9,11 @@ import (
 	"strings"
 )
 
+const (
+	Reset = "\033[0m"
+	Red   = "\033[31m"
+)
+
 func Grep(fs fs.FS, file string, query string, w io.Writer) error {
 	f, err := fs.Open(file)
 	if err != nil {
@@ -22,7 +27,7 @@ func Grep(fs fs.FS, file string, query string, w io.Writer) error {
 		lineContent := scanner.Text()
 
 		if strings.Contains(lineContent, query) {
-			fmt.Fprintln(&buffer, lineContent)
+			fmt.Fprintln(&buffer, strings.Replace(lineContent, query, Red+query+Reset, -1))
 		}
 	}
 

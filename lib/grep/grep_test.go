@@ -2,6 +2,7 @@ package grep
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 	"testing/fstest"
 )
@@ -14,7 +15,7 @@ func TestGrep(t *testing.T) {
 		}
 
 		query := "greeted"
-		want := "You will be greeted by the unexpected here and your mind will be challenged\n"
+		want := fmt.Sprintf("You will be %sgreeted%s by the unexpected here and your mind will be challenged\n", Red, Reset)
 		buffer := bytes.Buffer{}
 
 		err := Grep(fs, "file.txt", query, &buffer)
@@ -30,7 +31,7 @@ func TestGrep(t *testing.T) {
 		}
 
 		query := "cents"
-		want := "One dollar and eighty-seven cents.\nAnd sixty cents of it was in pennies.\n"
+		want := fmt.Sprintf("One dollar and eighty-seven %scents%s.\nAnd sixty %scents%s of it was in pennies.\n", Red, Reset, Red, Reset)
 		buffer := bytes.Buffer{}
 
 		err := Grep(fs, "file.txt", query, &buffer)

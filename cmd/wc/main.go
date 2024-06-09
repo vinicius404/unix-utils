@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/vncs404/unix-utils/lib/cat"
+	"github.com/vncs404/unix-utils/lib/wc"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 		fileName = args[0]
 	}
 
-	if err := cat.Catenate(os.DirFS("."), fileName, os.Stdout); err != nil {
-		log.Fatalf("failed to execute 'cat' command: %v", err)
+	if err := wc.WordCount(os.DirFS("."), fileName, os.Stdout); err != nil {
+		log.Fatalf("failed to execute 'ws' command: %v", err)
 	}
 }

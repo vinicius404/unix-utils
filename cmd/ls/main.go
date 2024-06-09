@@ -29,6 +29,6 @@ func main() {
 	}
 
 	if err := ls.ListDirFiles(os.DirFS("."), os.Stdout, config); err != nil {
-		log.Fatalf("failed to execute 'ls' command, %v", err)
+		log.Fatalf("failed to execute 'ls' command: %v", err)
 	}
 }

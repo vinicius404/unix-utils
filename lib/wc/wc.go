@@ -14,6 +14,15 @@ func WordCount(fs fs.FS, file string, w io.Writer) error {
 		return fmt.Errorf("failed to open file %s: %v", file, err)
 	}
 
+	stat, err := f.Stat()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve file information %s: %v", file, err)
+	}
+
+	if stat.IsDir() {
+		return fmt.Errorf("%s is a directory", file)
+	}
+
 	lineCount := 0
 	wordCount := 0
 	byteCount := 0
@@ -27,6 +36,6 @@ func WordCount(fs fs.FS, file string, w io.Writer) error {
 		lineCount++
 	}
 
-	fmt.Fprintf(w, "%d %d %d %s", lineCount, wordCount, byteCount, file)
+	fmt.Fprintf(w, "%d %d %d %s\n", lineCount, wordCount, byteCount, file)
 	return nil
 }

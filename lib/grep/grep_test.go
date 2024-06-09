@@ -17,8 +17,9 @@ func TestGrep(t *testing.T) {
 		want := "You will be greeted by the unexpected here and your mind will be challenged\n"
 		buffer := bytes.Buffer{}
 
-		Grep(fs, "file.txt", query, &buffer)
+		err := Grep(fs, "file.txt", query, &buffer)
 
+		assertNoError(t, err)
 		assertResult(t, buffer.String(), want)
 	})
 
@@ -32,8 +33,9 @@ func TestGrep(t *testing.T) {
 		want := "One dollar and eighty-seven cents.\nAnd sixty cents of it was in pennies.\n"
 		buffer := bytes.Buffer{}
 
-		Grep(fs, "file.txt", query, &buffer)
+		err := Grep(fs, "file.txt", query, &buffer)
 
+		assertNoError(t, err)
 		assertResult(t, buffer.String(), want)
 	})
 
@@ -47,8 +49,9 @@ func TestGrep(t *testing.T) {
 		want := ""
 		buffer := bytes.Buffer{}
 
-		Grep(fs, "file.txt", query, &buffer)
+		err := Grep(fs, "file.txt", query, &buffer)
 
+		assertNoError(t, err)
 		assertResult(t, buffer.String(), want)
 	})
 }
@@ -58,5 +61,13 @@ func assertResult(t testing.TB, got, want string) {
 
 	if got != want {
 		t.Errorf("got %q, want %q", got, want)
+	}
+}
+
+func assertNoError(t testing.TB, err error) {
+	t.Helper()
+
+	if err != nil {
+		t.Errorf("got an error but did not expect one, %v", err)
 	}
 }

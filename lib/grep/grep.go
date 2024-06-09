@@ -9,11 +9,13 @@ import (
 	"strings"
 )
 
-func Grep(fs fs.FS, file string, query string, w io.Writer) {
-	f, _ := fs.Open(file)
+func Grep(fs fs.FS, file string, query string, w io.Writer) error {
+	f, err := fs.Open(file)
+	if err != nil {
+		return fmt.Errorf("failed to open file %s: %v", file, err)
+	}
 
 	scanner := bufio.NewScanner(f)
-
 	buffer := bytes.Buffer{}
 
 	for scanner.Scan() {
@@ -25,4 +27,5 @@ func Grep(fs fs.FS, file string, query string, w io.Writer) {
 	}
 
 	fmt.Fprint(w, buffer.String())
+	return nil
 }
